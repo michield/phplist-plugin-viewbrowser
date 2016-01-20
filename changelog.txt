@@ -1,3 +1,30 @@
+version 2.4.4+20160120
+      Only replace logo for compatible phplist versions
+
+version 2.4.3+20151215
+      Correct template image query and add unit tests for logo image
+
+version 2.4.2+20151214
+      Support LOGO placeholder
+
+version 2.4.1+20151121
+      Update dependencies
+
+version 2.4.0+20151119
+      Add config item of plugins to be called
+      Allow plugins to modify template and message using hook method
+
+version 2.3.0+20151106
+      Initial unit tests and refactoring
+      Use correct class
+      Correct html for attachments
+      Add further tests
+      Correct namespaced class name
+      changes by Coding Standards Fixer
+      Added class map
+      Remove elements in specific class, fixes #10
+      Restructured tests
+
 version 2.2.0+20151018
       Use namespaced classes
 

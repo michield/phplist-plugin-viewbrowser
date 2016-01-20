@@ -1,6 +1,6 @@
 <?php
 /**
- * ViewBrowserPlugin for phplist
+ * ViewBrowserPlugin for phplist.
  * 
  * This file is a part of ViewBrowserPlugin.
  *
@@ -14,16 +14,15 @@
  * GNU General Public License for more details.
  * 
  * @category  phplist
- * @package   ViewBrowserPlugin
+ *
  * @author    Duncan Cameron
  * @copyright 2014-2015 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
- /**
- * Registers the plugin with phplist
+/**
+ * Registers the plugin with phplist.
  */
-
 class ViewBrowserPlugin extends phplistPlugin
 {
     const VERSION_FILE = 'version.txt';
@@ -32,6 +31,7 @@ class ViewBrowserPlugin extends phplistPlugin
     const IMAGE_PAGE = 'image';
     const VIEW_FILE = 'view.php';
     const PUBLIC_PAGE_VERSION = '3.0.7';
+    const LOGO_VERSION = '3.2.2';
 
     /*
      *  Private variables
@@ -68,6 +68,7 @@ class ViewBrowserPlugin extends phplistPlugin
             $params['p'] = self::VIEW_PAGE;
             $params['pi'] = self::PLUGIN;
         }
+
         return $url . '?' . http_build_query($params, '', '&');
     }
 
@@ -86,10 +87,19 @@ class ViewBrowserPlugin extends phplistPlugin
 
         return array(
             'XSL extension installed' => extension_loaded('xsl'),
-            'Common Plugin v3.0.2 or later installed' =>
-                phpListPlugin::isEnabled('CommonPlugin')
+            'Common Plugin v3.0.2 or later installed' => phpListPlugin::isEnabled('CommonPlugin')
                     && preg_match('/\d+\.\d+\.\d+/', $plugins['CommonPlugin']->version, $matches)
                     && version_compare($matches[0], '3.0.2') >= 0,
+            'RSS Feed plugin v2.2.0 or later installed' => (
+                phpListPlugin::isEnabled('RssFeedPlugin')
+                && version_compare($plugins['RssFeedPlugin']->version, '2.2.0') >= 0
+                || !phpListPlugin::isEnabled('RssFeedPlugin')
+            ),
+            'Content Areas plugin v1.4.0 or later installed' => (
+                phpListPlugin::isEnabled('ContentAreas')
+                && version_compare($plugins['ContentAreas']->version, '1.4.0') >= 0
+                || !phpListPlugin::isEnabled('ContentAreas')
+            ),
             'PHP version 5.3.0 or greater' => version_compare(PHP_VERSION, '5.3') > 0,
         );
     }
@@ -98,38 +108,44 @@ class ViewBrowserPlugin extends phplistPlugin
     {
         return array();
     }
- 
+
     public function __construct()
     {
         $this->coderoot = dirname(__FILE__) . '/' . self::PLUGIN . '/';
-        $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
-            ? file_get_contents($f)
-            : '';
         $this->settings = array(
-            'viewbrowser_link' => array (
+            'viewbrowser_link' => array(
               'value' => s('View in browser'),
               'description' => s('The text of the link'),
               'type' => 'text',
               'allowempty' => false,
-              'category'=> 'View in Browser',
+              'category' => 'View in Browser',
             ),
-            'viewbrowser_attributes' => array (
+            'viewbrowser_attributes' => array(
               'value' => s(''),
               'description' => s('Additional attributes for the html &lt;a> element'),
               'type' => 'text',
               'allowempty' => true,
-              'category'=> 'View in Browser',
+              'category' => 'View in Browser',
             ),
-            'viewbrowser_anonymous' => array (
+            'viewbrowser_anonymous' => array(
               'value' => false,
               'description' => s('Whether the plugin should provide an anonymous page'),
               'type' => 'boolean',
               'allowempty' => false,
-              'category'=> 'View in Browser',
-            )
+              'category' => 'View in Browser',
+            ),
+            'viewbrowser_plugins' => array(
+              'description' => s('Plugins to be used when creating the email. Usually leave this unchanged.'),
+              'type' => 'textarea',
+              'value' => "ContentAreas\nconditionalPlaceholderPlugin\nRssFeedPlugin\nViewBrowserPlugin",
+              'allowempty' => true,
+              'category' => 'View in Browser',
+            ),
         );
         parent::__construct();
-
+        $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
+            ? file_get_contents($f)
+            : '';
     }
 
     public function activate()

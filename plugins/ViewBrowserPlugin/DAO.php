@@ -5,7 +5,7 @@ namespace phpList\plugin\ViewBrowserPlugin;
 use phpList\plugin\Common;
 
 /**
- * ViewBrowserPlugin for phplist
+ * ViewBrowserPlugin for phplist.
  * 
  * This file is a part of ViewBrowserPlugin.
  *
@@ -19,22 +19,21 @@ use phpList\plugin\Common;
  * GNU General Public License for more details.
  * 
  * @category  phplist
- * @package   ViewBrowserPlugin
+ *
  * @author    Duncan Cameron
  * @copyright 2014 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
 /**
- * DAO class providing access to the message table
- * 
+ * DAO class providing access to the message table.
  */
-class DAO extends \CommonPlugin_DAO_User
+class DAO extends Common\DAO\User
 {
     public function forwardId($url)
     {
         $url = sql_escape($url);
-        $sql = 
+        $sql =
             "SELECT id
             FROM {$this->tables['linktrack_forward']} AS ltf
             WHERE ltf.url = '$url'";
@@ -55,13 +54,22 @@ class DAO extends \CommonPlugin_DAO_User
         return $this->dbCommand->queryRow($sql);
     }
 
+    /**
+     * Look up a template image by file name
+     * Include template 0 as it is used for logo images etc.
+     *
+     * @param int    $templateId the template id
+     * @param string $filename   the file name to look-up
+     *
+     * @return array|false
+     */
     public function templateImage($templateId, $filename)
     {
         $filename = sql_escape($filename);
         $sql =
             "SELECT id, data, mimetype, width, height
             FROM {$this->tables['templateimage']}
-            WHERE template = $templateId AND filename = '$filename'";
+            WHERE (template = $templateId OR template = 0) AND filename = '$filename'";
 
         return $this->dbCommand->queryRow($sql);
     }
@@ -85,5 +93,20 @@ class DAO extends \CommonPlugin_DAO_User
             WHERE ma.messageid = $mid";
 
         return $this->dbCommand->queryAll($sql);
+    }
+
+    public function getUserAttributeValues($email)
+    {
+        return getUserAttributeValues($email);
+    }
+
+    public function loadMessageData($mid)
+    {
+        return loadMessageData($mid);
+    }
+
+    public function fetchUrl($url, $user)
+    {
+        return fetchUrl($url, $user);
     }
 }
